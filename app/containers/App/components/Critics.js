@@ -42,6 +42,7 @@ const Critics = () => {
     const [reviewsCount, setReviewsCount] = useState(null);
     const [tableRows, setTableRows] = useState([]);
 
+    // define table rows
     const columns = [
         {field: 'name', title: 'Name'},
         {field: 'image', title: 'Image', render: rowData => <img src={rowData.image} />},
@@ -50,15 +51,24 @@ const Critics = () => {
         {field: 'numberOfCriticsPick', title: 'Number of Critics Pick'}
     ]
 
+    /*
+      first run the function reviewsPerCritic and set the result in state, 
+      then pass that state into the function generateTableRows
+    */
+    useEffect(() => {
+        setReviewsCount(reviewsPerCritic());
+        generateTableRows(reviewsCount);
+    }, [])
 
+
+    // use critics JSON data as well as reviews per critic data to set the rows.
     const generateTableRows = (criticsReviewsCount) => {
         const rows = allCritics.map(c => { 
-            console.log('reviews inside of map: ', criticsReviewsCount);
             return (
                 {
                     name: c.display_name,
                     image: c.multimedia ? c.multimedia.resource.src : 'https://cdn.iconscout.com/icon/free/png-256/account-avatar-profile-human-man-user-30448.png',
-                    bio: 'no bio available',
+                    bio: c.bio === null || !c.bio.length ? 'no bio available' : c.bio,
                     numberOfReviews: criticsReviewsCount ? criticsReviewsCount[0][c.display_name ? c.display_name.toUpperCase() : ''] || 0 : 0,
                     numberOfCriticsPick: criticsReviewsCount ? criticsReviewsCount[1][c.display_name ? c.display_name.toUpperCase() : ''] || 0 : 0,
                 }
@@ -67,6 +77,7 @@ const Critics = () => {
         setTableRows(rows)
     }
 
+    // map through reviews and count the # of reviews for each critic, as well as critic picks.
     const reviewsPerCritic = () => {
         let freqCount = {};
         let criticsPickCount = {};
@@ -85,21 +96,12 @@ const Critics = () => {
                 criticsPickCount[r.byline] += 1;
             }
         })
-        console.log('data needed:', [freqCount, criticsPickCount])
         return [freqCount, criticsPickCount];
     }
-    useEffect(() => {
-        setReviewsCount(reviewsPerCritic());
-        generateTableRows(reviewsCount);
-    }, [])
     
-    useEffect(() => {
-        // console.log('state change', reviewsCount)
-        generateTableRows(reviewsCount);
-    }, [reviewsCount])
 
     return (
-        <div style={{ maxWidth: '80%' }}>
+        <div style={{ maxWidth: '100%' }}>
         <MaterialTable  
             icons={tableIcons}
             columns={columns}

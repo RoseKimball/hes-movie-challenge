@@ -55,37 +55,27 @@ const [columns, setColumns] = useState([
   {field: 'link', hidden: true},
   {field: 'suggestedLink', hidden: true}
 ])
-// const [data, setData] = useState(displayData);
 
-// helper functions
-
-// console.log('sorted arr: ', sortedByPubDate);
-
+// sort the reviews by publication date and change so that it's more readable to user.
 const displayData = () => {
    reviews.sort((a, b) => {
         return new Date(a.publication_date) - new Date (b.publication_date);
     })
+
     reviews.map(i => {
       if(!i.mpaa_rating.length) i.mpaa_rating = 'No Rating'
-      // console.log('ciritics pick:', i.display_title, i.critics_pick)
       if(i.critics_pick === 1) {
         i.critics_pick = 'Yes';
-        // console.log(i.critics_pick, 'yes')
       } else if(i.critics_pick === 0) {
         i.critics_pick = 'No'
       }
       return i;
     });
     return reviews;
-    // console.log(reviews)
-    // setData(reviews);
 }
 
-
-
-//define table data
  
-
+// define table rows
 const rows = displayData().map(r => (
   {
     image: r.multimedia.src,
@@ -101,13 +91,10 @@ const rows = displayData().map(r => (
   }
 ))
 
-// useEffect(() => {
-//   displayData()
-// }, [selectedRowData])
 
   return (
     <>
-    <div style={{ maxWidth: '80%' }}>
+    <div classNam='homepage-wrapper'>
       <MaterialTable  
           icons={tableIcons}
           columns={columns}
